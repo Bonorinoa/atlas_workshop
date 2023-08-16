@@ -1,0 +1,52 @@
+{
+    "General Wellbeing": [
+        {"question": "How satisfied are you with your overall life?", "type": "likert"},
+        {"question": "To what extent do you feel a sense of purpose in life?", "type": "likert"},
+        {"question": "Rate your overall mental and emotional health.", "type": "likert"}
+    ],
+    "Positive Emotions": [
+        {"question": "How often do you experience joy in your daily life?", "type": "likert"},
+        {"question": "Describe a recent moment that made you happy.", "type": "short answer"},
+        {"question": "Rate the frequency of positive emotions you feel in a week.", "type": "likert"}
+    ],
+    "Engagement": [
+        {"question": "How often do you find yourself fully immersed in an activity?", "type": "likert"},
+        {"question": "Describe an activity that you enjoy and engage with deeply.", "type": "short answer"},
+        {"question": "Rate your level of engagement in your current job/studies.", "type": "likert"}
+    ],
+    "Positive Relationships": [
+        {"question": "How satisfied are you with the quality of your relationships?", "type": "likert"},
+        {"question": "Describe a person whose presence positively impacts your life.", "type": "short answer"},
+        {"question": "Rate your level of communication with your close friends.", "type": "likert"}
+    ],
+    "Meaning": [
+        {"question": "How meaningful do you find your daily activities?", "type": "likert"},
+        {"question": "Describe an experience that brought a sense of meaning to your life.", "type": "short answer"},
+        {"question": "Rate the extent to which you feel your life has purpose.", "type": "likert"}
+    ],
+    "Accomplishment": [
+        {"question": "How satisfied are you with your recent achievements?", "type": "likert"},
+        {"question": "Describe a goal you recently accomplished and how it made you feel.", "type": "short answer"},
+        {"question": "Rate your sense of accomplishment in your career/personal life.", "type": "likert"}
+    ],
+    "Physical": [
+        {"question": "On a scale of 1 to 10, how would you rate your overall physical health?", "type": "likert"},
+        {"question": "Describe your current exercise routine and its impact on your health.", "type": "short answer"},
+        {"question": "Rate your sleep quality and its effect on your energy levels.", "type": "likert"}
+    ],
+    "Mindset": [
+        {"question": "How often do you practice mindfulness or meditation?", "type": "likert"},
+        {"question": "Describe a situation where your mindset had a positive influence.", "type": "short answer"},
+        {"question": "Rate your level of optimism about future challenges.", "type": "likert"}
+    ],
+    "Environment": [
+        {"question": "How satisfied are you with your living environment?", "type": "likert"},
+        {"question": "Describe a place where you feel most relaxed and at peace.", "type": "short answer"},
+        {"question": "Rate the cleanliness and organization of your workspace.", "type": "likert"}
+    ],
+    "Economic": [
+        {"question": "How financially secure do you feel at the moment?", "type": "likert"},
+        {"question": "Describe a recent financial decision and its impact on your wellbeing.", "type": "short answer"},
+        {"question": "Rate your level of satisfaction with your current economic situation.", "type": "likert"}
+    ]
+}
