@@ -38,7 +38,7 @@ os.environ["COHERE_API_KEY"] = st.secrets["COHERE_API_KEY"]
 
 # interestingly the es_core_news_sm dictionary in spanish is better at identifying entities than the english one
 # python -m spacy download en_core_web_sm <- run in terminal to download the english dictionary (es_core_news_sm for spanish)
-nlp = spacy.load("en_core_web_sm")
+#nlp = spacy.load("en_core_web_sm")
 
 # entities and keywords from query  
 def extract_entities_keywords(text):
