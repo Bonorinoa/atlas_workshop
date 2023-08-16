@@ -14,3 +14,4 @@ cohere
 langchain
 openai
 nltk
+spacy
