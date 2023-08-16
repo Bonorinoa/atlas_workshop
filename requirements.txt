@@ -2,7 +2,7 @@ google-search-results
 bs4
 pydantic
 streamlit
-streamlit-chat
+streamlit_chat
 pandas 
 numpy
 Pillow
