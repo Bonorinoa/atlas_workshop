@@ -13,3 +13,4 @@ typing
 cohere
 langchain
 openai
+nltk
