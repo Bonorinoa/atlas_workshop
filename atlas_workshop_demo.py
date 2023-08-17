@@ -98,8 +98,8 @@ def run_demo():
                 st.spinner("Building report...")
                 
                 # Build report for selected pillar
-                report, cost = co_build_pillar_report(report_gen, pillar, 
-                                                      responses_df, user_data)
+                report, cost = build_pillar_report(report_gen, pillar, 
+                                                    responses_df, user_data)
                 
                 st.success("Report built!\n\n")
                 #st.write(report)
