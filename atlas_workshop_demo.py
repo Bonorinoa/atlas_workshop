@@ -5,6 +5,7 @@ import json
 import time
 import datetime as dt
 import pandas as pd
+import datetime as dt
 
 # load memory globally
 memory_path = "test_long_term_memory.json"
@@ -109,7 +110,7 @@ def run_demo():
                 
         if len(report) > 1:
             st.download_button("Download Report (you will need it to generate activities recommendations)", 
-                            data=report, file_name=f"{pillar}_report.txt")   
+                            data=report, file_name=f"{pillar}_report_{name}_{dt.datetime.today().strftime('%Y-%m-%d')}.txt")   
     else:
         st.warning("Please fill in the user profile information on the left sidebar before generating goals.")
         
