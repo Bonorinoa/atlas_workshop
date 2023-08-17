@@ -1,5 +1,4 @@
-from utils import (run_agent_from_profile, build_report,
-                   memory_to_pandas, build_pillar_report, build_pillar_report)
+from utils import (memory_to_pandas, build_pillar_report, build_pillar_report)
 import streamlit as st
 import json
 import time
