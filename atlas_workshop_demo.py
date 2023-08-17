@@ -104,12 +104,13 @@ def run_demo():
                 st.write(f"{report}")
                 #st.write(f"\n\nCost: {cost}")
                 st.write(f"Cost: {cost}")
-                
-                st.download_button("Download Report (you will need it to generate activities recommendations)", 
-                                   data=report, file_name=f"{pillar}_report.txt")
             
     else:
         st.warning("Please fill in the user profile information on the left sidebar before generating goals.")
+        
+    if report:
+        st.download_button("Download Report (you will need it to generate activities recommendations)", 
+                            data=report, file_name=f"{pillar}_report.txt")
         
     
 if __name__ == "__main__":
