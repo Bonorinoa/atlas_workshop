@@ -232,8 +232,9 @@ def build_pillar_report(report_generator_profile: dict,
  
     sys_prompt_template = '''You are {name}, an expert in [{knowledge}] with {personality} personality. {description}.'''
     task_prompt_template = '''Use the following questions {questions} and responses {demo_answers} to provide a well being assessment of the surveyed object with the following properties {user_data} based on the the {pillar} pillar of the Perma+4 framework.
-    You can use the following keywords to help you: {keywords}.
-    The output must be a structured, insightful and concise report that associates the responses to the questions with the specified pillar of Perma+4 framework. The first paragraph must be a description of the user's profile to inform wellbeing coaches.
+    You can use the following keywords to help you: {keywords}. 
+    The output must be a structured, insightful and concise report in paragraph format that associates the responses to the questions with the specified pillar of Perma+4 framework. 
+    The first paragraph must be a description of the user's profile to inform wellbeing coaches. The second paragraph the analysis of how the user stands in the selected pillar. Proceed step by step.
     
     --{user_name}'s REPORT-- 
     
@@ -246,8 +247,10 @@ def build_pillar_report(report_generator_profile: dict,
                             ],
                             template=prompt_template)
     
+    
     # default of build_llm is text-davinci-003
-    engine = build_llm(max_tokens=max_tokens, temperature=temperature)
+    engine = build_llm(max_tokens=max_tokens, temperature=temperature, 
+                       provider="openai")
     
     chain = LLMChain(llm=engine, prompt=prompt)
     report = chain.run({'name': name,
