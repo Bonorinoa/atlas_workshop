@@ -40,21 +40,6 @@ os.environ["COHERE_API_KEY"] = st.secrets["COHERE_API_KEY"]
 # python -m spacy download en_core_web_sm <- run in terminal to download the english dictionary (es_core_news_sm for spanish)
 #nlp = spacy.load("en_core_web_sm")
 
-# entities and keywords from query  
-def extract_entities_keywords(text):
-    '''
-    Function to extract entities and keywords from a text using spacy library.
-    params:
-        text: str
-    return:
-        entities: list
-        keywords: list    
-    '''
-    doc = nlp(text)
-    entities = [ent.text for ent in doc.ents]
-    keywords = [token.lemma_ for token in doc if token.is_stop == False and token.is_punct == False]
-    return entities, keywords
-
 @st.cache_data(max_entries=10, ttl=3600, show_spinner=True)
 def download_cache_report(report):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
@@ -534,7 +519,7 @@ def co_build_pillar_report(report_generator_profile: dict,
     # get number of tokens in report
     tokens = len(report.split())
     # cost of report
-    report_cost = compute_cost(tokens, 'cohere')
+    report_cost = compute_cost(tokens, 'cohere-free')
     
     return report, report_cost
 
