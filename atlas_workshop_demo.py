@@ -57,8 +57,10 @@ def run_demo():
 
     pillar = st.sidebar.selectbox("Select a pillar", pillars)
     
+    
     if name and age and tastes and occupation and location and pillar:
         user_data = [name, age, tastes, occupation, location]
+        report = ""
         
         # load survey data for selected pillar
         questions = load_survey(pillar)
@@ -104,13 +106,14 @@ def run_demo():
                 st.write(f"{report}")
                 #st.write(f"\n\nCost: {cost}")
                 st.write(f"Cost: {cost}")
-            
+                
+        if len(report) > 1:
+            st.download_button("Download Report (you will need it to generate activities recommendations)", 
+                            data=report, file_name=f"{pillar}_report.txt")   
     else:
         st.warning("Please fill in the user profile information on the left sidebar before generating goals.")
         
-    if report:
-        st.download_button("Download Report (you will need it to generate activities recommendations)", 
-                            data=report, file_name=f"{pillar}_report.txt")
+    
         
     
 if __name__ == "__main__":
