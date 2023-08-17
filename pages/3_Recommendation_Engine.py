@@ -44,6 +44,10 @@ def main():
         
         st.write(f"\n\nCost: {a_cost}")
         
+        st.download_button(label="Download recommendations", 
+                           data=activities, 
+                           file_name=f"Activities_{dt.datetime.today().date}.txt")
+        
     else:
         st.warning("Please upload your report to receive recommendations.")
         

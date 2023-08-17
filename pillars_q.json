@@ -30,7 +30,7 @@
         {"question": "Rate your sense of accomplishment in your career/personal life.", "type": "likert"}
     ],
     "Physical": [
-        {"question": "On a scale of 1 to 10, how would you rate your overall physical health?", "type": "likert"},
+        {"question": "On a scale of 1 to 7, how would you rate your overall physical health?", "type": "likert"},
         {"question": "Describe your current exercise routine and its impact on your health.", "type": "short answer"},
         {"question": "Rate your sleep quality and its effect on your energy levels.", "type": "likert"}
     ],

@@ -59,7 +59,7 @@ def compute_cost(tokens, engine):
 
 def build_llm(max_tokens: int, 
               temperature: int, 
-              provider="cohere"):
+              provider: str):
     '''
     Function to build a LLM model using lanchain library. 
     Default model is text-davinci-003 for OpenAI provider, but you can change it to any other model depending on the provider's models.
@@ -75,37 +75,17 @@ def build_llm(max_tokens: int,
     
     if provider == "openai":
         llm = OpenAI(model_name='text-davinci-003', temperature=temperature, max_tokens=max_tokens)
-    elif provider == "ChatOpenAI":
+        
+    elif provider == "ChatGPT3":
         llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=temperature, max_tokens=max_tokens)
+    
+    elif provider == "ChatGPT4":
+        llm = ChatOpenAI(model_name="gpt-4", temperature=temperature, max_tokens=max_tokens)
+    
     elif provider == "cohere":
         llm = Cohere(temperature=temperature, max_tokens=max_tokens)
     
     return llm
-
-def build_llm_tools(tools: list,
-                    max_tokens=260, 
-                    temperature=0.6, 
-                    provider="openai"):
-    '''
-    Function to build agent (llm + tools) using lanchain library.
-    params:
-        tools: list of tools
-        model_name: str, default 'text-davinci-003'
-        max_tokens: int, default 260
-        temperature: float, default 0.6
-        provider: str, default 'openai'
-    return:
-        agent: Langchain agent object
-    '''
-    agent = None
-    if provider == "openai":
-        llm = build_llm(temperature=temperature, max_tokens=max_tokens, provider=provider)
-
-        tools = load_tools(tools, llm=llm)
-
-        agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
-        
-    return agent
 
 def read_perma4(path: str, return_test_answers=False):
     '''
@@ -293,9 +273,9 @@ def generate_goals(recommender_generator_profile: dict,
     temperature = recommender_generator_profile['temperature']
     
     sys_prompt_template = '''You are {name}, an expert in [{knowledge}] with {personality} personality. {description}.'''
-    task_prompt_template = '''Use the following insights {report} to suggest three or fours goals for the surveyed object that will maximize his net benefit for the effort required to improve along the dimension analyzed in the report. \n
-    
-    1. Goal A \n
+    task_prompt_template = '''Use the following insights {report} to recommend three or fours goals for the surveyed object that will maximize his net benefit for the effort required to improve along the dimension analyzed in the report. 
+    The output must be an enumerated list of the goal and why it was recommended. \n
+    --
     
     '''
     
@@ -345,28 +325,24 @@ def suggest_activities(coach_profile: dict,
     
     sys_prompt_template = f'''You are {name}, an expert in [{knowledge}] with a {personality} personality. {description}.'''
     task_prompt_template = f'''Given the following insights {report} and goal recommendations {goals}.
-    Recommend two or three concrete activities that will help the surveyed object reformat their habits to achieve or move towards the suggested goals. Provide a description of what the activity entails.
+    Recommend two or three concrete activities that will help the surveyed object reformat their habits to achieve or move towards the suggested goals.
+    The output must be an enumerated list of the goal and why it was recommended. \n
     --
-    Prioritize the tools as follows: 
-    1. google-serper to research custom and relevant activities to recommend. 
-    You can use the following keywords to optimize your search: {keywords}.
-    --
-    
-    Write the suggested activities in bullet point format. Each activity must be clearly described and properly structured. 
-    
-    1. Activity A \n
       
     '''
     
-    tools = load_tools(['google-serper'])
+    search = GoogleSerperAPIWrapper()
+    tools = [(Tool(name='Intermediate Answer',
+                  func=search.run,
+                  description="useful for when you need to ask with search"))]
     
     prompt_template = sys_prompt_template + task_prompt_template
     
     engine = build_llm(max_tokens=max_tokens, temperature=temperature, provider=provider)
     coach_agent = initialize_agent(tools,
                                    engine,
-                                   agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-                                   verbose=True, max_iterations=7, early_stopping_method="generate"
+                                   agent=AgentType.SELF_ASK_WITH_SEARCH,
+                                   verbose=True, max_iterations=10, early_stopping_method="generate"
                                    )
     try:
         activities = coach_agent.run(prompt_template)
@@ -379,153 +355,8 @@ def suggest_activities(coach_profile: dict,
         
     return activities, activities_cost
 
-# ignore this function, is still on development. Not sure if it will be useful or not.
-def run_agent_from_profile(agent_profile: dict, 
-                           query: str):
-    '''
-    Function to build agent from memory using lanchain library.
-    params:
-        agent_profile: dict
-        memory: pandas dataframe
-    return:
-        agent: Langchain agent object
-    '''
-    agent = None 
-    
-    name = agent_profile['name']
-    agent_type = agent_profile['agent_type']
-    personality = agent_profile['personality']
-    knowledge = agent_profile['knowledge']
-    tools = agent_profile['tools']
-    description = agent_profile['description']
-    max_tokens = agent_profile['max_tokens']
-    temperature = agent_profile['temperature']
-    
-    engine = build_llm(model_name='text-davinci-003', 
-                       max_tokens=max_tokens, temperature=temperature)
-    llm_tools = load_tools(tools, llm=engine)
-    
-    prompt_template = '''You are {name}. {description}. You have a {personality} personality and {knowledge} knowledge.'''
-    prompt = PromptTemplate(input_variables=[name, description, query, personality, knowledge],
-                            template=prompt_template)
-    
-    if agent_type == "zeroShot":
-        print(f"Building (zeroShot) {name} agent...")
-        zeroShot_agent = initialize_agent(tools=llm_tools, llm=engine, 
-                                 agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
-        
-        # Build prompt before running to specify custom agent's prompt using its description, personality, and knowledge.
-        ## 
-        
-        zeroShot_chain = LLMChain(llm=engine,
-                                  prompt=prompt)
-                                  
-        agent_response = zeroShot_chain.run(query)
-        
-        
-        #agent = zeroShot_agent
-    
-    elif agent_type == "selfAskSearch":
-        print(f"Building (selfAskSearch) {name} agent...")
-        search = GoogleSerperAPIWrapper()
-        # intermediate answer tool
-        self_tools = [Tool(name="Intermediate Answer",
-                        func=search.run,
-                        description="useful for when you need to ask with search")]
-        
-        sealfAsk_agent = initialize_agent(tools=self_tools, llm=engine, 
-                                 agent=AgentType.SELF_ASK_WITH_SEARCH, verbose=True)
-        agent = sealfAsk_agent
-    
-    return agent_response
 
-## 08/16/2023
-def set_smart_goal(user_data, goal):
-    '''
-    Function to set smart goal conversationally with LLM.
-    params:
-        user_data: dict
-        goal: str
-    return:
-        smart_goal: str
-    '''
-    chatgpt = build_llm(model_name='ChatOpenAI', max_tokens=250, temperature=0.8)
-    
-    # langchain chat template
-    messages = [
-            SystemMessage(content="You are a helpful assistant that translates English to French."),
-            HumanMessage(content="I love programming.")
-                ]
-    chatgpt(messages)
-
-
-
-def co_build_pillar_report(report_generator_profile: dict,
-                            pillar: str,
-                            perma_results: pd.DataFrame,
-                            user_data: list):
-    '''
-    Function to initialize and run Cohere report generator given the AI profile and perma4 results for a specific pillar (workshop).
-    params:
-        report_generator_profile: dict
-        perma_results: list
-    return:
-        report: str
-    '''
-    questions = perma_results['Question']
-    demo_answers = perma_results['Response']
-    
-    name = report_generator_profile['name']
-    agent_type = report_generator_profile['agent_type']
-    personality = report_generator_profile['personality']
-    knowledge = report_generator_profile['knowledge']
-    tools = report_generator_profile['tools']
-    keywords = report_generator_profile['keywords']
-    description = report_generator_profile['description']
-    max_tokens = report_generator_profile['max_tokens']
-    temperature = report_generator_profile['temperature']
-    
-    #report_structure = "1. Positive Emotions \n 2. Engagement \n 3. Relationships \n 4. Meaning \n 5. Accomplishment \n 6. Physical Health \n 7. Mindset \n 8. Work Environment \n 9. Economic Security"
- 
-    sys_prompt_template = '''You are {name}, an expert in [{knowledge}] with {personality} personality. {description}.'''
-    task_prompt_template = '''Use the following questions {questions} and responses {demo_answers} to provide a well being assessment of the surveyed object with the following properties {user_data} based on the the {pillar} pillar of the Perma+4 framework.
-    You can use the following keywords to help you: {keywords}. 
-    The output must be a structured, insightful and concise report in paragraph format that associates the responses to the questions with the specified pillar of Perma+4 framework. 
-    The first paragraph must be a description of the user's profile to inform wellbeing coaches. The second paragraph the analysis of how the user stands in the selected pillar. Proceed step by step.
-    
-    --{user_name}'s REPORT-- 
-    
-    '''
-    prompt_template = sys_prompt_template + task_prompt_template
-    
-    prompt = PromptTemplate(input_variables=[
-                            "name", "knowledge", "description", "keywords", "user_name", "user_data",
-                            "questions", "demo_answers", "personality", "pillar"
-                            ],
-                            template=prompt_template)
-    
-    # default of build_llm is text-davinci-003
-    engine = build_llm(max_tokens=max_tokens, temperature=temperature, provider='cohere')
-    
-    chain = LLMChain(llm=engine, prompt=prompt)
-    report = chain.run({'name': name,
-                          'knowledge': knowledge,
-                          'description': description,
-                          'user_data':user_data,
-                          'keywords': keywords,
-                          'user_name':user_data[0],
-                          'questions': questions,
-                          'demo_answers': demo_answers,
-                          'personality': personality,
-                          'pillar': pillar})
-    
-    # get number of tokens in report
-    tokens = len(report.split())
-    # cost of report
-    report_cost = compute_cost(tokens, 'cohere-free')
-    
-    return report, report_cost
-
+## 08/17/2023
 def set_smart_goal(smart_profile: dict,
                    report: str,
                    human_input: str):
@@ -549,14 +380,14 @@ def set_smart_goal(smart_profile: dict,
                 HumanMessage(content=human_input + " Prompt me after each component of the SMART goal to continue our conversation.")]
     
     # build chat llm
-    chatgpt = build_llm(provider='ChatOpenAI', 
+    chatgpt = build_llm(provider='ChatGPT4', 
                         max_tokens=max_tokens, temperature=temperature)
     
     # run chat llm
     llm_output = chatgpt(messages).content
     
     # cost of report
-    llm_cost = compute_cost(len(llm_output.split()), 'gpt-3.5-turbo')
+    llm_cost = compute_cost(len(llm_output.split()), 'gpt-4')
     
     return llm_output, llm_cost
     
