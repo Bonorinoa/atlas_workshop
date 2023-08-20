@@ -147,9 +147,12 @@ def main_completion():
     st.title("Goal Setting")
     st.write("Our AI coach will walk you through the process of translating your goals into actionable steps based on the SMART framework and your perma report. SMART stands for Specific, Measurable, Achievable, Relevant, and Time-bound.\n")
 
-    st.session_state.user_report = []
-    st.session_state.smart_goals = []
-    
+    if "user_report" not in st.session_state:
+        st.session_state.user_report = []
+
+    if "smart_goals" not in st.session_state:
+        st.session_state.smart_goals = []
+
     uploaded_file = st.file_uploader("Upload your survey results as a .TXT file")
 
     if uploaded_file:
@@ -157,14 +160,13 @@ def main_completion():
         st.session_state.user_report.append(report)
     else:
         st.warning("Please upload your report to receive recommendations.")
-        
-    # text input for defining goal to work on
+    
     user_goal = st.text_input("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", key="user_input")
     
-    if user_goal and report:
+    if user_goal and st.session_state.user_report:
         if st.button("Generate SMART goal"):
             llm_output, cost = completion_smart_goal(smart_gen, 
-                                                     report, user_goal)
+                                                     st.session_state.user_report[-1], user_goal)
             st.write("SMART goal: \n\n")
             st.write(llm_output)
             st.write(f"\n\nGeneration cost: {cost}")       
@@ -173,33 +175,35 @@ def main_completion():
             
             st.download_button("Download SMART goal", llm_output, 
                                file_name="smart_goal.txt")
-            
-        elif st.session_state.smart_goals and st.checkbox("Improve SMART goal"):
-            
+    
+    if st.session_state.smart_goals:
+        if st.checkbox("Improve SMART goal"):
             user_comments = st.text_input("Any comments to improve the SMART goal?")
             
-            davinci = build_llm(max_tokens=350, temperature=0.75, provider='openai')
-            
-            sys_prompt = "You are a professional wellness coach who has received their certification from the International Coaching Federation."\
-                + " You specialize in helping users identify potential obstacles from their SMART goal, and set a plan to address such obstacles, based on the WOOP framework." \
-                + " Address the user as if you were their wellbeing coach. \n"
+            if user_comments:
+                davinci = build_llm(max_tokens=350, temperature=0.75, provider='openai')
                 
-            task_prompt = "Please improve the SMART goal below based on the following user comments: {user_comments}\n\n" + st.session_state.smart_goals[-1] + "\n\n"
+                sys_prompt = "You are a professional wellness coach who has received their certification from the International Coaching Federation."\
+                    + " You specialize in helping users identify potential obstacles from their SMART goal, and set a plan to address such obstacles, based on the WOOP framework." \
+                    + " Address the user as if you were their wellbeing coach. \n"
+                    
+                task_prompt = "Please improve the SMART goal below based on the following user comments: {user_comments}\n\n" + st.session_state.smart_goals[-1] + "\n\n"
 
-            prompt = PromptTemplate(input_variables=["user_comments"],
-                                    template= sys_prompt + task_prompt)
-            
-            chain = LLMChain(llm=davinci, prompt=prompt)
-            
-            smart_goal_2 = chain.run({"user_comments": user_comments})
-            
-            st.write("New SMART goal: \n\n")
-            st.write(smart_goal_2)
-            
-            st.session_state.smart_goals.append(smart_goal_2)
-            
-            st.download_button("Download SMART goal", smart_goal_2, 
-                               file_name="smart_goal.txt")
+                prompt = PromptTemplate(input_variables=["user_comments"],
+                                        template=sys_prompt + task_prompt)
+                
+                chain = LLMChain(llm=davinci, prompt=prompt)
+                
+                smart_goal_2 = chain.run({"user_comments": user_comments})
+                
+                st.write("New SMART goal: \n\n")
+                st.write(smart_goal_2)
+                
+                st.session_state.smart_goals.append(smart_goal_2)
+                
+                st.download_button("Download SMART goal", smart_goal_2, 
+                                file_name="smart_goal.txt")
+
 
 if __name__ == "__main__":
     main_completion()
