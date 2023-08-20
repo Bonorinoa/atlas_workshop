@@ -357,7 +357,7 @@ def suggest_activities(coach_profile: dict,
 
 
 ## 08/17/2023
-def set_smart_goal(smart_profile: dict,
+def chat_smart_goal(smart_profile: dict,
                    report: str,
                    human_input: str):
     '''
@@ -368,7 +368,7 @@ def set_smart_goal(smart_profile: dict,
     return:
         smart_goal: str
     '''
-    name = smart_profile['name']
+    #name = smart_profile['name']
     persona = smart_profile['system_prompt']
     temperature = smart_profile['temperature']
     max_tokens = smart_profile['max_tokens']
@@ -390,4 +390,47 @@ def set_smart_goal(smart_profile: dict,
     llm_cost = compute_cost(len(llm_output.split()), 'gpt-4')
     
     return llm_output, llm_cost
+
+def completion_smart_goal(smart_profile: dict,
+                          report: str,
+                          user_goal: str):
+    '''
+    One-shot completion of smart goal.
+    '''
+    smart_goal = ""
+    
+    persona = smart_profile['system_prompt']
+    temperature = smart_profile['temperature']
+    max_tokens = smart_profile['max_tokens']
+    
+    context = "\nYou have the following information about the client you are currently working with {report}.\n"
+    sys_prompt_template = persona + context
+
+    # task prompt to build detailed and formatted SMART goal 
+    task_prompt_template = '''The user has the following goal: {user_goal}.\n
+    Please write a SMART goal for the user. Break down the user's goal into actionable steps and display each component clearly. 
+    Proceed step by step. \n
+    --
+    
+    '''    
+    # prompt template
+    prompt_template = sys_prompt_template + task_prompt_template
+    prompt = PromptTemplate(input_variables=["report", "user_goal"],
+                            template=prompt_template)
+    
+    # build llm
+    davinci = build_llm(max_tokens=max_tokens, temperature=temperature, 
+                        provider='openai')
+    
+    # build chain
+    chain = LLMChain(llm=davinci, prompt=prompt)
+    
+    smart_goal = chain.run({'report': report,
+                            'user_goal': user_goal})
+    
+    # cost of report
+    llm_cost = compute_cost(len(smart_goal.split()), 'text-davinci-003')
+    
+    return smart_goal, llm_cost
+    
     

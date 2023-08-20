@@ -8,7 +8,7 @@ import os
 import pandas as pd
 from typing import Optional, Union, Literal
 
-from utils import set_smart_goal, memory_to_pandas
+from utils import completion_smart_goal, chat_smart_goal, memory_to_pandas
 
 # data type for avatar style
 AvatarStyle = Literal[ 
@@ -76,7 +76,7 @@ def init_chat(session_state):
         session_state.first_chat = True
         session_state.initialized = True
 
-def main():
+def main_chat():
     st.title("Goal Setting")
     st.write("Our AI coach will walk you through the process of translating your goals into actionable steps based on the SMART framework and your perma report. SMART stands for Specific, Measurable, Achievable, Relevant, and Time-bound.\n")
 
@@ -124,7 +124,7 @@ def main():
                 st.session_state.user_input.append(user_msg)
                 st.session_state.history_inputs.append(user_msg)
 
-                llm_output, cost = set_smart_goal(smart_gen, report, user_input)
+                llm_output, cost = chat_smart_goal(smart_gen, report, user_input)
                 #chat_message_ui(llm_output, is_user=False)
                 st.session_state.atlas_output.append(llm_output)
                 st.session_state.history_outputs.append(llm_output)
@@ -140,8 +140,36 @@ def main():
         for i in range(len(st.session_state.history_outputs)):
             chat_message_ui(st.session_state.history_inputs[i], is_user=True, key=f"{i}_user")
             chat_message_ui(st.session_state.history_outputs[i], is_user=False, key=f"{i}_atlas")
+
+def main_completion():
+    st.title("Goal Setting")
+    st.write("Our AI coach will walk you through the process of translating your goals into actionable steps based on the SMART framework and your perma report. SMART stands for Specific, Measurable, Achievable, Relevant, and Time-bound.\n")
+
+    st.session_state.user_report = []
+    st.session_state.smart_goals = []
+    
+    uploaded_file = st.file_uploader("Upload your survey results as a .TXT file")
+
+    if uploaded_file:
+        report = uploaded_file.read().decode("utf-8")
+        st.session_state.user_report.append(report)
+    else:
+        st.warning("Please upload your report to receive recommendations.")
         
+    # text input for defining goal to work on
+    user_goal = st.text_input("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", key="user_input")
+    
+    if user_goal and report:
+        if st.button("Generate SMART goal"):
+            llm_output, cost = completion_smart_goal(smart_gen, 
+                                                     report, user_goal)
+            st.write("SMART goal: \n\n")
+            st.write(llm_output)
+            st.write(f"\n\nGeneration cost: {cost}")       
+            
+            st.session_state.smart_goals.append(llm_output)
+
 if __name__ == "__main__":
-    main()
+    main_completion()
     
     
