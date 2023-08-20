@@ -104,7 +104,7 @@ def main_chat():
                 st.session_state.user_input.append(user_msg)
                 st.session_state.history_inputs.append(user_msg)
                 
-                llm_output, cost = set_smart_goal(smart_gen, report, user_input)
+                llm_output, cost = chat_smart_goal(smart_gen, report, user_input)
                 #chat_message_ui(llm_output, is_user=False)
                 st.session_state.atlas_output.append(llm_output)
                 st.session_state.history_outputs.append(llm_output)
@@ -168,6 +168,9 @@ def main_completion():
             st.write(f"\n\nGeneration cost: {cost}")       
             
             st.session_state.smart_goals.append(llm_output)
+            
+            st.download_button("Download SMART goal", llm_output, 
+                               file_name="smart_goal.txt")
 
 if __name__ == "__main__":
     main_completion()
