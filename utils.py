@@ -450,14 +450,14 @@ def completion_obstacles_and_planning(smart_goal: str):
     
     sys_prompt = "You are a professional wellness coach who has received their certification from the International Coaching Federation."\
                 + " You specialize in helping users identify potential obstacles from their SMART goal, and set a plan to address such obstacles, based on the WOOP framework." \
-                + " You are currently working with a user who has the following SMART goal: {smart_goal}.\n"
+                + " Address the user as if you were their wellbeing coach. \n"
     
-    task_prompt = "Write a list of potential internal and external obstacles that may prevent the user from achieving their SMART goal: {smart_goal}. \n -- \n Then, recommend a plan to help the user address each obstacle. Proceed step by step. \n -- \n"
+    task_prompt = "Write a list of potential internal and external obstacles that may prevent the user from achieving their SMART goal: {smart_goal}. \n -- \n Then, recommend a plan to help the user think about how to overcome each obstacle. Proceed step by step. \n -- \n"
     
     prompt = PromptTemplate(input_variables=["smart_goal"],
                             template=sys_prompt + task_prompt)
     
-    davinci = build_llm(max_tokens=200, temperature=0.75, 
+    davinci = build_llm(max_tokens=350, temperature=0.75, 
                        provider='openai')
     
     chain = LLMChain(llm=davinci, prompt=prompt)

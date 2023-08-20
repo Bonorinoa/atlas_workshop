@@ -2,13 +2,15 @@ import streamlit as st
 import streamlit.components.v1 as components
 import streamlit_chat
 
+from langchain import LLMChain, PromptTemplate
+
 import logging
 import random
 import os
 import pandas as pd
 from typing import Optional, Union, Literal
 
-from utils import completion_smart_goal, chat_smart_goal, memory_to_pandas
+from utils import completion_smart_goal, chat_smart_goal, memory_to_pandas, build_llm
 
 # data type for avatar style
 AvatarStyle = Literal[ 
@@ -170,6 +172,33 @@ def main_completion():
             st.session_state.smart_goals.append(llm_output)
             
             st.download_button("Download SMART goal", llm_output, 
+                               file_name="smart_goal.txt")
+            
+        elif st.session_state.smart_goals and st.checkbox("Improve SMART goal"):
+            
+            user_comments = st.text_input("Any comments to improve the SMART goal?")
+            
+            davinci = build_llm(max_tokens=350, temperature=0.75, provider='openai')
+            
+            sys_prompt = "You are a professional wellness coach who has received their certification from the International Coaching Federation."\
+                + " You specialize in helping users identify potential obstacles from their SMART goal, and set a plan to address such obstacles, based on the WOOP framework." \
+                + " Address the user as if you were their wellbeing coach. \n"
+                
+            task_prompt = "Please improve the SMART goal below based on the following user comments: {user_comments}\n\n" + st.session_state.smart_goals[-1] + "\n\n"
+
+            prompt = PromptTemplate(input_variables=["user_comments"],
+                                    template= sys_prompt + task_prompt)
+            
+            chain = LLMChain(llm=davinci, prompt=prompt)
+            
+            smart_goal_2 = chain.run({"user_comments": user_comments})
+            
+            st.write("New SMART goal: \n\n")
+            st.write(smart_goal_2)
+            
+            st.session_state.smart_goals.append(smart_goal_2)
+            
+            st.download_button("Download SMART goal", smart_goal_2, 
                                file_name="smart_goal.txt")
 
 if __name__ == "__main__":

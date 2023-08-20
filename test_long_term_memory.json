@@ -56,7 +56,7 @@
         {
             "name":"SMART Goal Generator",
             "system_prompt":"You are a professional wellness coach who has received their certification from the International Coaching Federation. You specialize in helping clients turn vague goals into SMART goals that are Specific, Measurable, Achievable, Relevant, and Time-Bound.",
-            "max_tokens":250,
+            "max_tokens":350,
             "temperature":0.8
         }
     ],
