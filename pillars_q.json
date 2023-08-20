@@ -1,52 +1,86 @@
 {
-    "General Wellbeing": [
-        {"question": "How satisfied are you with your overall life?", "type": "likert"},
-        {"question": "To what extent do you feel a sense of purpose in life?", "type": "likert"},
-        {"question": "Rate your overall mental and emotional health.", "type": "likert"}
-    ],
-    "Positive Emotions": [
-        {"question": "How often do you experience joy in your daily life?", "type": "likert"},
-        {"question": "Describe a recent moment that made you happy.", "type": "short answer"},
-        {"question": "Rate the frequency of positive emotions you feel in a week.", "type": "likert"}
-    ],
-    "Engagement": [
-        {"question": "How often do you find yourself fully immersed in an activity?", "type": "likert"},
-        {"question": "Describe an activity that you enjoy and engage with deeply.", "type": "short answer"},
-        {"question": "Rate your level of engagement in your current job/studies.", "type": "likert"}
-    ],
-    "Positive Relationships": [
-        {"question": "How satisfied are you with the quality of your relationships?", "type": "likert"},
-        {"question": "Describe a person whose presence positively impacts your life.", "type": "short answer"},
-        {"question": "Rate your level of communication with your close friends.", "type": "likert"}
-    ],
-    "Meaning": [
-        {"question": "How meaningful do you find your daily activities?", "type": "likert"},
-        {"question": "Describe an experience that brought a sense of meaning to your life.", "type": "short answer"},
-        {"question": "Rate the extent to which you feel your life has purpose.", "type": "likert"}
-    ],
-    "Accomplishment": [
-        {"question": "How satisfied are you with your recent achievements?", "type": "likert"},
-        {"question": "Describe a goal you recently accomplished and how it made you feel.", "type": "short answer"},
-        {"question": "Rate your sense of accomplishment in your career/personal life.", "type": "likert"}
-    ],
-    "Physical": [
-        {"question": "On a scale of 1 to 7, how would you rate your overall physical health?", "type": "likert"},
-        {"question": "Describe your current exercise routine and its impact on your health.", "type": "short answer"},
-        {"question": "Rate your sleep quality and its effect on your energy levels.", "type": "likert"}
-    ],
-    "Mindset": [
-        {"question": "How often do you practice mindfulness or meditation?", "type": "likert"},
-        {"question": "Describe a situation where your mindset had a positive influence.", "type": "short answer"},
-        {"question": "Rate your level of optimism about future challenges.", "type": "likert"}
-    ],
-    "Environment": [
-        {"question": "How satisfied are you with your living environment?", "type": "likert"},
-        {"question": "Describe a place where you feel most relaxed and at peace.", "type": "short answer"},
-        {"question": "Rate the cleanliness and organization of your workspace.", "type": "likert"}
-    ],
-    "Economic": [
-        {"question": "How financially secure do you feel at the moment?", "type": "likert"},
-        {"question": "Describe a recent financial decision and its impact on your wellbeing.", "type": "short answer"},
-        {"question": "Rate your level of satisfaction with your current economic situation.", "type": "likert"}
-    ]
+ "Positive Emotions": {
+        "instructions":"Instructions: Positive emotions are emotions such as joy, excitement, motivation, enthusiasm, happiness, interest, love, and gratitude. Positive emotions broaden our thinking and behavior which helps us to develop physical, social, and psychological resources. For instance, if you experience gratitude in your relationships, you appreciate those people more, and that has the potential to enhance your relationship satisfaction. Studies show that people who experience greater positive emotions have greater physical health, more meaning and happiness in their lives. The goal of this exercise is to become aware of the experiences that bring you and toward your positive emotions. \n\nPlease start by rating your positive emotions and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I experience feelings of joy in a typical day ", "type": "likert"},
+                {"question": "Describe the experiences that typically bring up positive emotions for you: What are you doing? Who are you with? What emotions do you experience in those moments?", "type": "short answer"}, 
+                {"question": "Describe the experiences that typically block you from experiencing these emotions: What are you doing? Who are you with? What emotions do you experience in those moments?", "type": "short answer"}
+            ]},
+ "Engagement": {
+        "instructions":"Instructions: Engagement is all about Flow, which is an experience where you are absorbed in the present moment. You’ve definitely experienced it sometime in your life, whether you were exercising, talking to a friend or working on a hard project in school or at work. During Flow, we normally perform optimally with high levels of Well being. Studies show that people who experience flow more often are more creative, and productive, and have higher levels of well being. The goal of this exercise is to become aware of your flow experiences so that you can develop ways to experience them more often. \n\nPlease start by rating your engagement and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I typically feel fully absorbed in what I am doing ", "type": "likert"},
+                {"question": "Please spend some time describing experiences you feel fully engaged with during a typical day: What are you doing? Who are you with? How do you feel in those experiences?", "type": "short answer"}, 
+                {"question": "Please spend some time describing experiences you feel least engaged during a typical day: What are you doing? Who are you with? How do you feel in those experiences?", "type": "short answer"}
+            ]},
+ "Positive Relationships":{
+        "instructions":"Instructions: Relationships are fundamental to our health, well being and meaning in ife. The goal of this exercise is to evaluate the relationships in your life. Take a brief moment to think about your relationships with other people in your life, such as family, friends, significant others, colleagues at work or school. The goal of this exercise is to evaluate the relationships in your life. \n\nPlease start by rating your relationships and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "quesions":[
+                {"question": "I am generally satisfied with the quality of relationships in my life ", "type": "likert"},
+                {"question": "What is good about your relationships and why?", "type": "short answer"},
+                {"question": "What do you feel is missing from your relationships with other people?", "type": "short answer"},
+                {"question": "Do you feel like you could be a better contributor to your relationships with others? How so?", "type": "short answer"}
+            ]},
+ "Meaning":{
+        "instructions":"Instructions: Experiencing meaning in your life is essential for your health and well being. Meaning is about understanding yourself and your role in the world, and you tend to understand yourself through experiences and the meaning you make out of them, having a purpose which is an aspiring aim and contributing to some greater good which is how your life positively impacts the life of others. \n\nPlease start by rating your meaning and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "My life is valuable", "type": "likert"},
+                {"question": "I am able to make sense of the pathway my life has taken", "type": "likert"},
+                {"question": "My life serves a greater purpose", "type": "likert"},
+                {"question": "What gives your life purpose?", "type": "short answer"},
+                {"question": "What are you doing currently in life that is meaningful?", "type": "short answer"},
+                {"question": "What are you doing currently in life that is not meaningful?", "type": "short answer"}
+            ]},
+ "Accomplishment": {
+        "instructions":"Instructions: A sense of accomplishment is the perception that you are progressing and succeeding in your daily life: personally, professionally, or socially. Having a sense of accomplishment contributes to your well being. by contributing to a sense of personal direction and impacting your overall sense of self-worth. \n\nPlease start by rating your physical health and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I am generally satisfied with what I have accomplished in life", "type": "likert"},
+                {"question": "Please describe specific accomplishments you are most proud of and why you are proud of them.", "type": "short answer"},
+                {"question": "What do you feel like you have yet to accomplish?", "type": "short answer"},
+                {"question": "What barriers are preventing you from achieving these accomplishments?", "type": "short answer"},
+                {"question": "What accomplishments are you currently working towards?", "type": "short answer"}
+            ]},
+ "Physical":{
+        "instructions":"Instructions: Our physical health has many implications across both mental and physical domains. Positive physical health buffers against mental health disorders and is essential to psychological wellbeing. Positive physical health is more than just the absence of disease. it is the state of optimal physiological functioning. The physical health pillar is composed of sleep, exercise, nutrition, and stress, all of which contribute to our. \n\nPlease start by rating your Physical Health and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I typically feel physically healthy", "type": "likert"},
+                {"question": "I typically get enough sleep", "type": "likert"},
+                {"question": "I typically manage my stress well", "type": "likert"},
+                {"question": "I typically feel energized after eating", "type": "likert"},
+                {"question": "I typically incorporate enough movement and exercise into my life", "type": "likert"},
+                {"question": "Please spend some time describing the factors that contribute to your overall nutritional needs", "type": "short answer"},
+                {"question": "Please spend some time describing factors that contribute to your overall sleep quality.", "type": "short answer"},
+                {"question": "Please spend some time describing the ways in which you enjoy incorporating movement and exercise into your life.", "type": "short answer"},
+                {"question": "Please spend some time describing how you approach stress management.", "type": "short answer"}
+            ]},
+ "Mindset":{
+        "instructions":"Instructions: There are two main dimensions to mindset. The first refers to having a growth or a fixed mindset. A growth mindset refers to believing that you can improve your skills, abilities and intelligence with effort while a fixed mindset is believing that your skills, abilities and intelligence are unchangeable. Those who have a growth mindset tend to have greater success and performance in school, work and life. \n\nPlease start by rating your mindset and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I can think of many ways to reach my current goals", "type": "likert"},
+                {"question": "I can solve most problems if I invest the necessary effort", "type": "likert"},
+                {"question": "Sometimes I make myself do things that will help me live a better life, even if I don’t want to", "type": "likert"},
+                {"question": "The future holds a lot of good in store for me", "type": "likert"},
+                {"question": "Do you generally believe you are capable of solving problems you are faced with in life? Why or why not?", "type": "short answer"},
+                {"question": "How do you normally respond when faced with an obstacle?", "type": "short answer"},
+                {"question": "Do you tend to look at the glass half full or empty? Why or why not?", "type": "short answer"}
+            ]},
+ "Environment":{
+        "instructions":"Instructions: Environment refers to the physical setting you spend most of your daily life in, such as the quality of your physical environment, access to natural light, and time in nature. Environment can impact both your physical health and your well being. \n\nPlease start by rating your environment and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I typically have access to natural light during the daytime)", "type": "likert"},
+                {"question": "I typically spend time in settings that are physically comfortable )", "type": "likert"},
+                {"question": "I can conveniently access nature in my life (parks, oceans, and mountains)", "type": "likert"},
+                {"question": "How do you feel about the physical environments you spend the most time in?", "type": "short answer"},
+                {"question": "How does the time you spend in these environments contribute to your well being?", "type": "short answer"},
+                {"question": "Which physical environments do you most enjoy spending time in?", "type": "short answer"}
+            ]},
+ "Economic": {
+        "instructions":"Instructions: Your control of financial matters is a strong predictor of your well being. Economic security is the impact your level of income, spending, and savings have on your well being. Economic security is less about the objective state of your finances and more about how you perceive your finances. Depending on a multitude of factors, some people feel comfortable with less money, while others with more money may still feel anxious or lacking. \n\nPlease start by rating your economic security and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
+        "questions":[
+                {"question": "I am comfortable with the current state of my finances ", "type": "likert"},
+                {"question": "Do you feel like there is a comfortable balance between the amount of money you make and the amount of money you spend each month? Why or why not?", "type": "short answer"},
+                {"question": "Are you comfortable with the amount of financial assets you have access to? Why or why not?", "type": "short answer"},
+                {"question": "Are you comfortable with your ability to pay for adequate health-care? Why or why not? ", "type": "short answer"},
+                {"question": "Overall, do you feel on track to meet your major financial goals? Why or why not?", "type": "short answer"}
+            ]}
 }

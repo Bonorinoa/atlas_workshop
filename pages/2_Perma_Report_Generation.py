@@ -52,7 +52,7 @@ def run_demo():
     
     # survey data for selected pillar
     st.sidebar.header("Survey Data")
-    pillars = ["General Wellbeing", "Positive Emotions", "Engagement", "Positive Relationships", 
+    pillars = ["Positive Emotions", "Engagement", "Positive Relationships", 
                "Meaning", "Accomplishment", "Physical", "Mindset", "Environment", "Economic"]
 
     pillar = st.sidebar.selectbox("Select a pillar", pillars)
@@ -63,8 +63,14 @@ def run_demo():
         report = ""
         
         # load survey data for selected pillar
-        questions = load_survey(pillar)
+        pillar_survey = load_survey(pillar)
+        
+        instructions = pillar_survey['instructions']
+        questions = pillar_survey['questions']
+        
         st.subheader(f"Survey questions for {pillar} pillar \n\n")
+        
+        st.write(instructions)
         
         # Initialize an empty DataFrame to store user responses
         responses_df = pd.DataFrame(columns=["Question", "Response"])
