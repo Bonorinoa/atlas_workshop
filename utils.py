@@ -202,16 +202,13 @@ def build_pillar_report(report_generator_profile: dict,
     name = report_generator_profile['name']
     agent_type = report_generator_profile['agent_type']
     personality = report_generator_profile['personality']
-    knowledge = report_generator_profile['knowledge']
-    #tools = report_generator_profile['tools']
-    #keywords = report_generator_profile['keywords']
     description = report_generator_profile['description']
     max_tokens = report_generator_profile['max_tokens']
     temperature = report_generator_profile['temperature']
     
     #report_structure = "1. Positive Emotions \n 2. Engagement \n 3. Relationships \n 4. Meaning \n 5. Accomplishment \n 6. Physical Health \n 7. Mindset \n 8. Work Environment \n 9. Economic Security"
  
-    sys_prompt_template = '''You are a professional {description} with a {personality} personality. You specialize in {knowledge} and are known for your expertise in this field. '''
+    sys_prompt_template = '''You are a professional {description} with a {personality} personality.'''
     task_prompt_template = '''Using the provided set of questions ({questions}) and sample responses ({demo_answers}), conduct a comprehensive well-being assessment of the individual described by the following attributes: {user_data}, focusing on the {pillar} pillar of the Perma+4 framework.\n 
     Your output should consist of a well-structured, insightful, and concise report presented in paragraph format. Connect the responses to the questions of the {pillar} pillar from the Perma+4 framework. Your report should begin with a brief overview of the user's profile for the benefit of well-being coaches. Subsequent paragraphs should provide an in-depth analysis of the user's alignment with the selected pillar. Please proceed systematically.
         
@@ -228,7 +225,7 @@ def build_pillar_report(report_generator_profile: dict,
         prompt_template = sys_prompt_template + task_prompt_template
     
         prompt = PromptTemplate(input_variables=[
-                                "knowledge", "description", "user_name", "user_data",
+                                "description", "user_name", "user_data",
                                 "questions", "demo_answers", "personality", "pillar"
                                 ],
                                 template=prompt_template)
@@ -236,7 +233,6 @@ def build_pillar_report(report_generator_profile: dict,
         chain = LLMChain(llm=engine, prompt=prompt)
         
         report = chain.run({'name': name,
-                            'knowledge': knowledge,
                             'description': description,
                             'user_data':user_data,  
                             'user_name':user_data[0],
