@@ -5,6 +5,11 @@ import os
 import nltk
 import spacy
 import streamlit as st
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import datetime as dt
 
 from langchain.llms import OpenAI, Cohere
 from langchain.chat_models import ChatOpenAI
@@ -495,3 +500,49 @@ def completion_obstacles_and_planning(goal: str, smart_goal: str):
     cost = compute_cost(len(obstacles.split()), 'text-davinci-003')
     
     return obstacles, cost
+
+def send_email(user_name, user_email, feedback):
+    smtp_port = 587                 # Standard secure SMTP port
+    smtp_server = "smtp.gmail.com"  # Google SMTP Server
+
+    email_from = "agbonorino21@gmail.com" 
+    email_to = "atlas.intelligence21@gmail.com" 
+
+    pswd = "arqxfjbvwuyybopi"       # App password for gmail
+    
+    message = f"""Feedback from {user_name} ({user_email}):
+
+    {feedback}
+    """
+
+    ### SEND EMAIL ###
+    simple_email_context = ssl.create_default_context()
+
+    try:
+        # Connect to the server
+        print("Connecting to server...")
+        TIE_server = smtplib.SMTP(smtp_server, smtp_port)
+        TIE_server.starttls(context=simple_email_context)
+        TIE_server.login(email_from, pswd)
+        print("Connected to server :-)")
+        
+        # Create the MIMEText object with the message and encoding
+        msg = MIMEMultipart()
+        msg.attach(MIMEText(message, "plain", "utf-8"))
+        msg["From"] = email_from
+        msg["To"] = email_to
+        msg["Subject"] = "Feedback Form - Atlas Demo ({})".format(user_name)
+        
+        # Send the actual email
+        print()
+        print(f"Sending email to - {email_to}")
+        TIE_server.send_message(msg)
+        print(f"Email successfully sent to - {email_to}")
+
+    # If there's an error, print it out
+    except Exception as e:
+        print(e)
+
+    # Close the port
+    finally:
+        TIE_server.quit()

@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import completion_obstacles_and_planning
+from utils import completion_obstacles_and_planning, send_email
 
 def main():
     st.title("Obstacles & Planning")
@@ -34,12 +34,14 @@ def main():
         
         with st.form("Discussion"):
             st.write("What are the main internal and external obstacles that could prevent you from reaching your goal? What are the potential solutions to those obstacles? Write your main obstacles and how you plan to overcome/prevent them.")
-            st.text_area("Main obstacles and solutions", key="user_input2")
+            user_answer = st.text_area("Main obstacles and solutions", key="user_input2")
             submit_button = st.form_submit_button(label="Submit")
             if submit_button:
+                send_email(user_name="Atlas", user_email="atlas.intelligence21@gmail.com",
+                           feedback=user_answer)
                 st.success("Your response has been submitted.")
         
-        st.download_button("Download Atlas' Response", llm_output, 
+        st.download_button("Download Atlas' Response", llm_output + "\n\n--\n\n" + user_answer, 
                            file_name="obstacles_and_plan.txt")
         
 if __name__ == "__main__":
