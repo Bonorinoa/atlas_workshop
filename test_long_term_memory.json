@@ -45,13 +45,11 @@
         {
             "name":"Report Generator",
             "agent_type":"zeroShot",
-            "personality":"professional, detailed",
-            "knowledge":"writing, assessment, psychology", 
-            "tools":["wolfram-alpha"],
-            "keywords": "[well-being, happiness, sadness, anger, fear, disgust, surprise, trust, anticipation, joy, sadness, love, hate, contentment, satisfaction, gratitude, compassion, empathy, kindness, generosity, sympathy, guilt, shame, pride, embarrassment, regret, hope, optimism, pessimism, confidence, self-esteem, self-worth, self-respect, self-confidence, self-consciousness, self-awarenes]",
-            "description":"A friendly AI with access to wolfram-alpha for advanced reasoning that, given PERMA+4 assessment responses, will generate a detailed report that evaluates the responder's state on each of the 9 dimensions of PERMA+4.",
-            "max_tokens":500,
-            "temperature":0.6
+            "personality":"professional, attentive, and detailed",
+            "knowledge":"writing, assessment, and psychology",
+            "description":"a friendly AI that, given PERMA+4 assessment responses, will generate a detailed report in paragraph format evaluating the responder's state on the relevant dimension of PERMA+4.",
+            "max_tokens":350,
+            "temperature":0.65
         },
         {
             "name":"SMART Goal Generator",

@@ -46,7 +46,7 @@ def run_demo():
     st.sidebar.header("User Profile")
     name = st.sidebar.text_input("Name", "Enter your name")
     age = st.sidebar.text_input("Age", "Enter your age")
-    tastes = st.sidebar.text_input("Tastes", "What hobbies or interests do you have?") #tennis, sports, physics, reading, economics
+    tastes = st.sidebar.text_area("Tastes", "What hobbies or interests do you have?") 
     occupation = st.sidebar.text_input("Occupation", "Enter your occupation")
     location = st.sidebar.text_input("Location", "Where are you based?")
     
@@ -92,7 +92,7 @@ def run_demo():
                     
                 elif question_type == 'short answer':
                     short_answer_key = f"short_answer_{i}"  # Generate a unique key for the text input
-                    short_answer = st.text_input("Your answer:", key=short_answer_key)  # Display text input
+                    short_answer = st.text_area("Your answer:", key=short_answer_key)  # Display text input
                     # add response to dataframe
                     responses_df = pd.concat([responses_df, pd.DataFrame.from_records({"Question": question, "Response": short_answer}, index=[0])])
             
@@ -105,7 +105,8 @@ def run_demo():
                 
                 # Build report for selected pillar
                 report, cost = build_pillar_report(report_gen, pillar, 
-                                                    responses_df, user_data)
+                                                    responses_df, user_data,
+                                                    provider="openai")
                 
                 st.success("Report built!\n\n")
                 #st.write(report)

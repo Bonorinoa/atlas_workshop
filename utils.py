@@ -186,7 +186,8 @@ def build_report(report_generator_profile: dict,
 def build_pillar_report(report_generator_profile: dict,
                         pillar: str,
                         perma_results: pd.DataFrame,
-                        user_data: list):
+                        user_data: list,
+                        provider: str):
     '''
     Function to initialize and run report generator given the AI profile and perma4 results for a specific pillar (workshop).
     params:
@@ -202,52 +203,65 @@ def build_pillar_report(report_generator_profile: dict,
     agent_type = report_generator_profile['agent_type']
     personality = report_generator_profile['personality']
     knowledge = report_generator_profile['knowledge']
-    tools = report_generator_profile['tools']
-    keywords = report_generator_profile['keywords']
+    #tools = report_generator_profile['tools']
+    #keywords = report_generator_profile['keywords']
     description = report_generator_profile['description']
     max_tokens = report_generator_profile['max_tokens']
     temperature = report_generator_profile['temperature']
     
     #report_structure = "1. Positive Emotions \n 2. Engagement \n 3. Relationships \n 4. Meaning \n 5. Accomplishment \n 6. Physical Health \n 7. Mindset \n 8. Work Environment \n 9. Economic Security"
  
-    sys_prompt_template = '''You are {name}, an expert in [{knowledge}] with {personality} personality. {description}.'''
-    task_prompt_template = '''Use the following questions {questions} and responses {demo_answers} to provide a well being assessment of the surveyed object with the following properties {user_data} based on the the {pillar} pillar of the Perma+4 framework.
-    You can use the following keywords to help you: {keywords}. 
-    The output must be a structured, insightful and concise report in paragraph format that associates the responses to the questions with the specified pillar of Perma+4 framework. 
-    The first paragraph must be a description of the user's profile to inform wellbeing coaches. The second paragraph the analysis of how the user stands in the selected pillar. Proceed step by step.
-    
-    --{user_name}'s REPORT-- 
-    
+    sys_prompt_template = '''You are a professional {description} with a {personality} personality. You specialize in {knowledge} and are known for your expertise in this field. '''
+    task_prompt_template = '''Using the provided set of questions ({questions}) and sample responses ({demo_answers}), conduct a comprehensive well-being assessment of the individual described by the following attributes: {user_data}, focusing on the {pillar} pillar of the Perma+4 framework.\n 
+    Your output should consist of a well-structured, insightful, and concise report presented in paragraph format. Connect the responses to the questions of the {pillar} pillar from the Perma+4 framework. Your report should begin with a brief overview of the user's profile for the benefit of well-being coaches. Subsequent paragraphs should provide an in-depth analysis of the user's alignment with the selected pillar. Please proceed systematically.
+        
+        -- {user_name}'s Well-Being Assessment Report --
+        
     '''
-    prompt_template = sys_prompt_template + task_prompt_template
-    
-    prompt = PromptTemplate(input_variables=[
-                            "name", "knowledge", "description", "keywords", "user_name", "user_data",
-                            "questions", "demo_answers", "personality", "pillar"
-                            ],
-                            template=prompt_template)
-    
+
     
     # default of build_llm is text-davinci-003
-    engine = build_llm(max_tokens=max_tokens, temperature=temperature, 
+    if provider == "openai":
+        engine = build_llm(max_tokens=max_tokens, temperature=temperature, 
                        provider="openai")
+        
+        prompt_template = sys_prompt_template + task_prompt_template
     
-    chain = LLMChain(llm=engine, prompt=prompt)
-    report = chain.run({'name': name,
-                          'knowledge': knowledge,
-                          'description': description,
-                          'user_data':user_data,
-                          'keywords': keywords,
-                          'user_name':user_data[0],
-                          'questions': questions,
-                          'demo_answers': demo_answers,
-                          'personality': personality,
-                          'pillar': pillar})
+        prompt = PromptTemplate(input_variables=[
+                                "knowledge", "description", "user_name", "user_data",
+                                "questions", "demo_answers", "personality", "pillar"
+                                ],
+                                template=prompt_template)
+        
+        chain = LLMChain(llm=engine, prompt=prompt)
+        
+        report = chain.run({'name': name,
+                            'knowledge': knowledge,
+                            'description': description,
+                            'user_data':user_data,  
+                            'user_name':user_data[0],
+                            'questions': questions,
+                            'demo_answers': demo_answers,
+                            'personality': personality,
+                            'pillar': pillar})
+        
+        # get number of tokens in report
+        tokens = len(report.split())
+        # cost of report
+        report_cost = compute_cost(tokens, 'text-davinci-003')
+        
+    elif provider == "ChatGPT4":
+        engine = build_llm(max_tokens=max_tokens, temperature=temperature,
+                          provider="ChatGPT4")
     
-    # get number of tokens in report
-    tokens = len(report.split())
-    # cost of report
-    report_cost = compute_cost(tokens, 'text-davinci-003')
+        messages = [SystemMessage(content=sys_prompt_template),
+                HumanMessage(content=task_prompt_template)]
+        
+        # run chat llm
+        report = engine(messages).content
+        
+        # cost of report
+        report_cost = compute_cost(len(report.split()), 'gpt-4')
     
     return report, report_cost
 
@@ -326,7 +340,7 @@ def suggest_activities(coach_profile: dict,
     sys_prompt_template = f'''You are {name}, an expert in [{knowledge}] with a {personality} personality. {description}.'''
     task_prompt_template = f'''Given the following insights {report} and goal recommendations {goals}.
     Recommend two or three concrete activities that will help the surveyed object reformat their habits to achieve or move towards the suggested goals.
-    The output must be an enumerated list of the goal and why it was recommended. \n
+    The output must be an enumerated list of the relevant goals. \n
     --
       
     '''
@@ -393,7 +407,8 @@ def chat_smart_goal(smart_profile: dict,
 
 def completion_smart_goal(smart_profile: dict,
                           report: str,
-                          user_goal: str):
+                          user_goal: str,
+                          provider: str):
     '''
     One-shot completion of smart goal.
     '''
@@ -403,39 +418,54 @@ def completion_smart_goal(smart_profile: dict,
     temperature = smart_profile['temperature']
     max_tokens = smart_profile['max_tokens']
     
-    # smart report structure
-    output_structure = "1. Specific: \n2. Measurable: \n3. Achievable: \n4. Relevant: \n5. Time-bound: \n"
-    
-    context = "\nYou have the following information about the client you are currently working with {report}.\n"
+    # SMART report structure
+    output_structure = "1. Specific:\n2. Measurable:\n3. Achievable:\n4. Relevant:\n5. Time-bound:\n"
+
+    context = "Your expertise lies in helping clients create effective SMART goals. You are currently working with a new client who has shared their information with you. Here's the context of the client's situation:\n\n{report}\n"
     sys_prompt_template = persona + context
 
-    # task prompt to build detailed and formatted SMART goal 
-    task_prompt_template = '''The user has the following goal: {user_goal}.\n
-    Please write a SMART goal for the user. Break down the user's goal into actionable steps and enumerate each component clearly based on the following structure [{output_structure}]. 
-    Proceed step by step. \n
+    # Task prompt to build a detailed and formatted SMART goal
+    task_prompt_template = '''The user has set the following goal: "{user_goal}".\n
+    Please help the user formulate a SMART goal. Break down the user's goal into actionable steps and enumerate each component clearly based on the following structure:\n{output_structure}
+    Proceed step by step. Provide a clear and concise plan. Do not make reference to any particular year.\n
     --
+    '''
     
-    '''   
-    # prompt template
-    prompt_template = sys_prompt_template + task_prompt_template
-    prompt = PromptTemplate(input_variables=["report", "user_goal", "output_structure"],
-                            template=prompt_template)
+    if provider == 'openai':
+        # prompt template   
+        prompt_template = sys_prompt_template + task_prompt_template
+        prompt = PromptTemplate(input_variables=["report", "user_goal", "output_structure"],
+                                template=prompt_template)
+        
+        # build llm
+        davinci = build_llm(max_tokens=max_tokens, temperature=temperature, 
+                            provider='openai')
+        
+        # build chain
+        chain = LLMChain(llm=davinci, prompt=prompt)
+        
+        smart_goal = chain.run({'report': report,
+                                'user_goal': user_goal,
+                                'output_structure': output_structure})
+        
+        # cost of report
+        smart_goal_cost = compute_cost(len(smart_goal.split()), 'text-davinci-003')
+        
+    elif provider == 'ChatGPT4':
+        
+        engine = build_llm(max_tokens=max_tokens, temperature=temperature,
+                           provider='ChatGPT4')
+        
+        messages = [SystemMessage(content=sys_prompt_template),
+                HumanMessage(content=task_prompt_template)]
+        
+        # run chat llm
+        smart_goal = engine(messages).content
+        
+        # cost of report
+        smart_goal_cost = compute_cost(len(smart_goal.split()), 'gpt-4')
     
-    # build llm
-    davinci = build_llm(max_tokens=max_tokens, temperature=temperature, 
-                        provider='openai')
-    
-    # build chain
-    chain = LLMChain(llm=davinci, prompt=prompt)
-    
-    smart_goal = chain.run({'report': report,
-                            'user_goal': user_goal,
-                            'output_structure': output_structure})
-    
-    # cost of report
-    llm_cost = compute_cost(len(smart_goal.split()), 'text-davinci-003')
-    
-    return smart_goal, llm_cost
+    return smart_goal, smart_goal_cost
     
 def completion_obstacles_and_planning(smart_goal: str):
     '''

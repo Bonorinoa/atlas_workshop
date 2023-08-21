@@ -99,8 +99,8 @@ def main_chat():
     with form:
         if st.session_state.first_chat:
             generate_button = form.form_submit_button("Ask.")
-            user_input = st.text_input("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", key="chat_input")
-            if user_input:
+            user_input = st.text_area("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).")
+            if user_input and generate_button:
                 user_msg = f"Hello, I have the following goal: {user_input}. Can you help me turn this into a SMART goal? Let's work on each component step by step. Please help me address the 'Specific' component first."
                 #chat_message_ui(user_msg, is_user=True)
                 st.session_state.user_input.append(user_msg)
@@ -161,12 +161,13 @@ def main_completion():
     else:
         st.warning("Please upload your report to receive recommendations.")
     
-    user_goal = st.text_input("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", key="user_input")
+    user_goal = st.text_area("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", key="user_input")
     
     if user_goal and st.session_state.user_report:
         if st.button("Generate SMART goal"):
             llm_output, cost = completion_smart_goal(smart_gen, 
-                                                     st.session_state.user_report[-1], user_goal)
+                                                     st.session_state.user_report[-1], user_goal,
+                                                     provider="openai")
             st.write("SMART goal: \n\n")
             st.write(llm_output)
             st.write(f"\n\nGeneration cost: {cost}")       
@@ -178,7 +179,7 @@ def main_completion():
     
     if st.session_state.smart_goals:
         if st.checkbox("Improve SMART goal"):
-            user_comments = st.text_input("Any comments to improve the SMART goal?")
+            user_comments = st.text_area("Any comments to improve the SMART goal?")
             
             if user_comments:
                 davinci = build_llm(max_tokens=350, temperature=0.75, provider='openai')

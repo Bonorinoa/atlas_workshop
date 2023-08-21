@@ -43,8 +43,7 @@ def main():
     st.write("\nRanked Pillars:\n\n")
     
     for pillar in sorted(responses, key=responses.get, reverse=True):
-        # print first three pillars in green, next three in yellow, and last three in red. Include the value of the pillar in the print statement
-        
-        st.markdown(f"<span style='color: {'green' if responses[pillar] > 7 else 'yellow' if responses[pillar] > 4 else 'red'};'>{pillar}: {responses[pillar]}</span>", unsafe_allow_html=True)
+        # print first three pillars highligthed in green, next three in dark yellow, and last three in red. Include the value of the pillar in the print statement
+        st.markdown(f"<span style='color: {'#00c119' if responses[pillar] >= 7 else '#c6cd00' if responses[pillar] >= 4 else '#af024c'}'><b>{pillar}</b>: {responses[pillar]}</span>", unsafe_allow_html=True)
 if __name__ == "__main__":
     main()

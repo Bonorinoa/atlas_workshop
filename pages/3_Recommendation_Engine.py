@@ -30,8 +30,6 @@ def main():
         goals, g_cost = generate_goals(recommendator, report, 
                                        provider='openai')
         st.spinner("Generating goals...")
-        st.write(f"Goals: \n\n {goals}\n\n")
-        st.write(f"Cost: {g_cost} \n\n")
         
         # recommend goals to user
         activities, a_cost = suggest_activities(coach, report, goals, 
@@ -40,7 +38,7 @@ def main():
         
         # display recommendations
         st.write("Recommendations\n\n")
-        st.write(f"Goals: \n\n {activities}\n\n")
+        st.write(f"\n\n {activities}\n\n")
         
         st.write(f"\n\nCost: {a_cost}")
         
