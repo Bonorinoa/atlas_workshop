@@ -185,10 +185,9 @@ def main_completion():
                 davinci = build_llm(max_tokens=350, temperature=0.75, provider='openai')
                 
                 sys_prompt = "You are a professional wellness coach who has received their certification from the International Coaching Federation."\
-                    + " You specialize in helping users identify potential obstacles from their SMART goal, and set a plan to address such obstacles, based on the WOOP framework." \
-                    + " Address the user as if you were their wellbeing coach. \n"
+                           + " Address the user as if you were their wellbeing coach. \n"
                     
-                task_prompt = "Please improve the SMART goal below based on the following user comments: {user_comments}\n\n" + st.session_state.smart_goals[-1] + "\n\n"
+                task_prompt = "Please improve the SMART goal below based on the following user comments: {user_comments}\n\n--" + st.session_state.smart_goals[-1] + "--\n\n"
 
                 prompt = PromptTemplate(input_variables=["user_comments"],
                                         template=sys_prompt + task_prompt)
@@ -197,7 +196,6 @@ def main_completion():
                 
                 smart_goal_2 = chain.run({"user_comments": user_comments})
                 
-                st.write("New SMART goal: \n\n")
                 st.write(smart_goal_2)
                 
                 st.session_state.smart_goals.append(smart_goal_2)

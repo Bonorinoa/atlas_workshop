@@ -6,17 +6,25 @@ def main():
     st.write("Upload your SMART goal to work with the AI to identify potential obstacles and develop a plan to overcome them.")
     
     st.session_state.llm_output = []
+    st.session_state.goals = []
     st.session_state.smart_goals = []
     
     uploaded_file = st.file_uploader("Upload your SMART goal as a .TXT file")
     if uploaded_file:
         smart_goal = uploaded_file.read().decode("utf-8")
         st.session_state.smart_goals.append(smart_goal)
+        
+        goal = st.text_input("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", 
+                         key="user_input")
+        st.session_state.goals.append(goal)
+                
     else:
         st.warning("Please upload your SMART goal to receive recommendations.")
         
-    if st.session_state.smart_goals:
-        llm_output, cost = completion_obstacles_and_planning(smart_goal=smart_goal)
+        
+    if st.session_state.smart_goals and goal:
+        llm_output, cost = completion_obstacles_and_planning(goal=goal, 
+                                                             smart_goal=smart_goal)
         
         st.write("Atlas' Response\n\n")
         st.write(llm_output)
@@ -24,6 +32,13 @@ def main():
         st.write("\n\nCost: ", cost)
         
         st.session_state.llm_output.append(llm_output)
+        
+        with st.form("Discussion"):
+            st.write("What are the main internal and external obstacles that could prevent you from reaching your goal? What are the potential solutions to those obstacles? Write your main obstacles and how you plan to overcome/prevent them.")
+            st.text_area("Main obstacles and solutions", key="user_input2")
+            submit_button = st.form_submit_button(label="Submit")
+            if submit_button:
+                st.success("Your response has been submitted.")
         
         st.download_button("Download Atlas' Response", llm_output, 
                            file_name="obstacles_and_plan.txt")

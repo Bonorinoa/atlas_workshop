@@ -463,7 +463,7 @@ def completion_smart_goal(smart_profile: dict,
     
     return smart_goal, smart_goal_cost
     
-def completion_obstacles_and_planning(smart_goal: str):
+def completion_obstacles_and_planning(goal: str, smart_goal: str):
     '''
     Function to identify and plan for potential internal or external obstacles of a given SMART goal. 
     Functionality based on the Obstacles and Planning components of the WOOP framework.
@@ -478,9 +478,9 @@ def completion_obstacles_and_planning(smart_goal: str):
                 + " You specialize in helping users identify potential obstacles from their SMART goal, and set a plan to address such obstacles, based on the WOOP framework." \
                 + " Address the user as if you were their wellbeing coach. \n"
     
-    task_prompt = "Write a list of potential internal and external obstacles that may prevent the user from achieving their SMART goal: {smart_goal}. \n -- \n Then, recommend a plan to help the user think about how to overcome each obstacle. Proceed step by step. \n -- \n"
+    task_prompt = "After stating the goal to work on ({goal}) write a list of potential internal and external obstacles that may prevent the user from achieving their SMART goal: {smart_goal}. \n -- \n Then, recommend a plan to help the user think about how to overcome each obstacle. Proceed step by step. \n\n"
     
-    prompt = PromptTemplate(input_variables=["smart_goal"],
+    prompt = PromptTemplate(input_variables=["goal", "smart_goal"],
                             template=sys_prompt + task_prompt)
     
     davinci = build_llm(max_tokens=350, temperature=0.75, 
@@ -488,7 +488,8 @@ def completion_obstacles_and_planning(smart_goal: str):
     
     chain = LLMChain(llm=davinci, prompt=prompt)
     
-    obstacles = chain.run({'smart_goal': smart_goal})
+    obstacles = chain.run({'smart_goal': smart_goal,
+                           'goal': goal})
     
     # cost
     cost = compute_cost(len(obstacles.split()), 'text-davinci-003')
