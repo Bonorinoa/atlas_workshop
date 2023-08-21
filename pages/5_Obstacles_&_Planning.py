@@ -11,12 +11,11 @@ def main():
     
     uploaded_file = st.file_uploader("Upload your SMART goal as a .TXT file")
     if uploaded_file:
+        goal = uploaded_file.name
+        st.session_state.goals.append(goal)
+        
         smart_goal = uploaded_file.read().decode("utf-8")
         st.session_state.smart_goals.append(smart_goal)
-        
-        goal = st.text_input("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", 
-                         key="user_input")
-        st.session_state.goals.append(goal)
                 
     else:
         st.warning("Please upload your SMART goal to receive recommendations.")

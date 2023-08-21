@@ -6,7 +6,7 @@ import streamlit as st
 # this function should only provide information about Atlas (Home page)
 def main():
     
-    st.title("Atlas Intelligence: your path to well-being")
+    st.title("Atlas Intelligence: Reclaim control of your well-being")
     
     st.subheader("About Atlas")
     st.write("Atlas Intelligence leverages the latest in Artificial Intelligence, Wellness, and Behavioral science to offer users access to a holistic wellness coach in their pocket.\n " \

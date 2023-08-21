@@ -175,7 +175,7 @@ def main_completion():
             st.session_state.smart_goals.append(llm_output)
             
             st.download_button("Download SMART goal", llm_output, 
-                               file_name="smart_goal.txt")
+                               file_name=f"{user_goal}.txt")
     
     if st.session_state.smart_goals:
         if st.checkbox("Improve SMART goal"):
@@ -201,7 +201,7 @@ def main_completion():
                 st.session_state.smart_goals.append(smart_goal_2)
                 
                 st.download_button("Download SMART goal", smart_goal_2, 
-                                file_name="smart_goal.txt")
+                                file_name=f"{user_goal}.txt")
 
 
 if __name__ == "__main__":
