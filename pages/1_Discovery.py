@@ -23,7 +23,7 @@ def main():
     
     st.write("The Discovery process is a series of questions that will help you identify your current state of wellbeing. This will help you understand where you are now and where you want to be in the future. It will also help the AI narrow down the areas you want to focus on.")
     
-    st.write("\nPlease answer the following questions on a scale of 0-10, where 0 is the lowest and 10 is the highest.")
+    st.write("\nImagine a ladder where the top of the ladder represents the best possible life for you (10) and the bottom of the ladder represents the worst possible life for you (0)")
         
     # write questions and get slider input from user
     q1 = st.slider("General Wellbeing: On which step of the ladder would you say you personally feel you stand at this time?", min_value=0, max_value=10, value=5, step=1, key="General Wellbeing")
