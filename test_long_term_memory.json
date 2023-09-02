@@ -47,19 +47,19 @@
             "agent_type":"zeroShot",
             "personality":"professional, attentive, and detailed",
             "knowledge":"writing, assessment, and psychology",
-            "description":"a friendly AI that, given PERMA+4 assessment responses, will generate a detailed report in paragraph format evaluating the responder's state on the relevant dimension of PERMA+4.",
+            "description":"a friendly AI skilled in PERMA+4 assessment responses",
             "max_tokens":350,
-            "temperature":0.65
+            "temperature":1
         },
         {
             "name":"SMART Goal Generator",
             "system_prompt":"You are a professional wellness coach who has received their certification from the International Coaching Federation. You specialize in helping clients turn vague goals into SMART goals that are Specific, Measurable, Achievable, Relevant, and Time-Bound.",
             "max_tokens":350,
-            "temperature":0.8
+            "temperature":1
         }
     ],
 
-    "user_profiles":[
+    "test_user_profiles":[
         {
             "name":"Augusto GB",
             "age":22,

@@ -164,10 +164,23 @@ def main_completion():
     user_goal = st.text_area("Write the goal or activity you would like to work on in a few words (e.g., develop healthier lifestyle habits).", key="user_input")
     
     if user_goal and st.session_state.user_report:
-        if st.button("Generate SMART goal"):
+        if st.button("Generate SMART goal with completion"):
             llm_output, cost = completion_smart_goal(smart_gen, 
                                                      st.session_state.user_report[-1], user_goal,
                                                      provider="openai")
+            st.write("SMART goal: \n\n")
+            st.write(llm_output)
+            st.write(f"\n\nGeneration cost: {cost}")       
+            
+            st.session_state.smart_goals.append(llm_output)
+            
+            st.download_button("Download SMART goal", llm_output, 
+                               file_name=f"{user_goal}.txt")
+            
+        elif st.button("Generate SMART goal with chat (BETA)"):
+            llm_output, cost = chat_smart_goal(smart_gen, 
+                                               st.session_state.user_report[-1], 
+                                               user_goal)
             st.write("SMART goal: \n\n")
             st.write(llm_output)
             st.write(f"\n\nGeneration cost: {cost}")       
@@ -184,10 +197,12 @@ def main_completion():
             if user_comments:
                 davinci = build_llm(max_tokens=350, temperature=0.75, provider='openai')
                 
-                sys_prompt = "You are a professional wellness coach who has received their certification from the International Coaching Federation."\
-                           + " Address the user as if you were their wellbeing coach. \n"
+                # SMART report structure
+                output_structure = "1. Specific:\n2. Measurable:\n3. Achievable:\n4. Relevant:\n5. Time-bound:\n"
+                
+                sys_prompt = "You are a thoughtful, analytical, and empathetic wellness coach"
                     
-                task_prompt = "Please improve the SMART goal below based on the following user comments: {user_comments}\n\n--" + st.session_state.smart_goals[-1] + "--\n\n"
+                task_prompt = "Please answer any questions the user has about the SMART goal below based on the following user comments: {user_comments}\n\n--" + st.session_state.smart_goals[-1] + "--\n\n Please write an updated SMART goal based on the user comments and in the same structure as before. Then lay out the entire SMART goal for me in a single paragraph."
 
                 prompt = PromptTemplate(input_variables=["user_comments"],
                                         template=sys_prompt + task_prompt)

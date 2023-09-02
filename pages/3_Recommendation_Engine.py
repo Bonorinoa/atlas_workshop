@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import generate_goals, suggest_activities, memory_to_pandas
+from utils import suggest_activities, memory_to_pandas
 import time
 import datetime as dt
 from io import StringIO
@@ -26,13 +26,8 @@ def main():
         stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
         report = stringio.read()
         
-        # build goal generator
-        goals, g_cost = generate_goals(recommendator, report, 
-                                       provider='openai')
-        st.spinner("Generating goals...")
-        
         # recommend goals to user
-        activities, a_cost = suggest_activities(coach, report, goals, 
+        activities, a_cost = suggest_activities(coach, report,
                                                 provider='openai')
         st.spinner("Generating recommendations...")
         
