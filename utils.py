@@ -36,12 +36,19 @@ os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["WOLFRAM_ALPHA_APPID"] = st.secrets["WOLFRAM_ALPHA_APPID"]
 os.environ["COHERE_API_KEY"] = st.secrets["COHERE_API_KEY"]
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 # ----------
 
 # TODO: Fix build_chain function
 # TODO: Write generic function to build custom langchain tools (i.e., summarise, suggest, search-chat)
 # TODO: Write functions to save and load information from memory
 # TODO: Implement asynchronous versions of llm/chain builders
+# TODO: Rewrite build_llm to support multiple providers, and their respective models
+
+#model = "google/flan-t5-base"
+    #llm = HuggingFaceHub(repo_id=model,
+    #                 model_kwargs={"temperature": 0.9,
+    #                               "max_length": 100})
 
 # interestingly the es_core_news_sm dictionary in spanish is better at identifying entities than the english one
 # python -m spacy download en_core_web_sm <- run in terminal to download the english dictionary (es_core_news_sm for spanish)

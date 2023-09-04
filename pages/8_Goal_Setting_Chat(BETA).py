@@ -28,90 +28,60 @@ smart_gen = memory_df['AI_profiles'][5]
 def clear_chat_history():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
-
-def chat_smart_goal(smart_profile: dict,
-                    system_prompt: str,
-                    report: str,
-                    human_input: str,
-                    chat_history: str):
+# Function for generating LLM response
+def generate_response(system_prompt, message_history):
     '''
     Function to set smart goal conversationally with LLM.
     params:
-        smart_profile: dict
-        provider: str
+        system_prompt: dict
+        message_history: str
     return:
         smart_goal: str
     '''
-    #name = smart_profile['name']
-    persona = smart_profile['system_prompt']
-    temperature = smart_profile['temperature']
-    max_tokens = smart_profile['max_tokens']
-
-    system_template = SystemMessagePromptTemplate.from_template(system_prompt)
-    human_template = HumanMessagePromptTemplate.from_template("{input}")
-    ai_template = AIMessagePromptTemplate.from_template("{response}")
+    # build chat llm
+    chatgpt = build_llm(provider='ChatGPT4', max_tokens=150, temperature=1)
+    
+    # design prompt
+    system_template = SystemMessagePromptTemplate.from_template("{system_prompt}")
+    human_template = HumanMessagePromptTemplate.from_template("{chat_history}")
 
     # create the list of messages
     chat_prompt = ChatPromptTemplate.from_messages([
         system_template,
-        human_template,
-        ai_template
+        human_template
     ])
-    
-    # build chat llm
-    chatgpt = build_llm(provider='ChatGPT4', 
-                        max_tokens=max_tokens, temperature=temperature)
-    
-    # Build chain
-    conversation_chain = ConversationChain(llm=chatgpt, prompt=chat_prompt,
-                                           memory=ConversationBufferMemory())
-    
-    # Create a dictionary to hold the chat context
-    chat_context = {'report': report, 'input': human_input, 'response': "Hi! I'm your wellness coach. I'm here to help you set a SMART goal. Shall we define the first dimension?"}
-    
-    # Add chat history to the context
-    chat_context['chat_history'] = chat_history
-    
-    # Run chat LLM
-    llm_output = conversation_chain.run(chat_context)
-    
-    # cost of report
-    llm_cost = compute_cost(len(llm_output.split()), 'gpt-4')
-    
-    return llm_output, llm_cost
-
-# Function for generating LLM response
-def generate_response(prompt_input, message_history):
-
-    llm = build_llm(150, 1, 'openai')
-
-    #for dict_message in st.session_state.messages:
-    #    string_dialogue = "You are a helpful assistant."
-    #    if dict_message["role"] == "user":
-    #        string_dialogue += "User: " + dict_message["content"] + "\n\n"
-    #    else:
-    #        string_dialogue += "Assistant: " + dict_message["content"] + "\n\n"
-
-    #prompt = f"{string_dialogue} {prompt_input} Assistant: "
     
     # Create the complete prompt with conversation history
     chat_history = "\n".join([f"{msg['role']}: {msg['content']}" for msg in message_history])
-    prompt = f"{chat_history}\n\nUser: {prompt_input}\nAssistant: "
+    prompt = {
+        'system_prompt': system_prompt,
+        'chat_history': chat_history  
+    }
     
-    return llm(prompt)
+    # Build chain
+    chain = LLMChain(llm=chatgpt, prompt=chat_prompt)
+    
+    response = chain.run(prompt)  # Pass 'prompt' here
+    
+    cost = compute_cost(len(response.split()), 'gpt-4')
+    
+    return response, cost
 # -------------------------------- #
 
 st.set_page_config(page_title="🤗💬 SmartBot Test")
 
+
 with st.sidebar:
     st.title('🤗💬 SmartBot')
     st.subheader('Powered by 🤗 Language Models')
-    st.text_area("Enter your system prompt here", height=400)
+    system_prompt = st.text_area("Enter your system prompt here", height=150)
     st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
             
 # Store LLM generated responses
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+if "total_cost" not in st.session_state:
+    st.session_state.total_cost = 0
 
 # Display or clear chat messages
 for message in st.session_state.messages:
@@ -130,7 +100,10 @@ if prompt := st.chat_input():
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            response = generate_response(prompt, st.session_state.messages) 
-            st.write(response) 
+            response, cost = generate_response(system_prompt, st.session_state.messages) 
+            st.write(response)
+            st.session_state.total_cost += cost
+            st.sidebar.write(f"Cost of interaction: {cost}")
+            st.sidebar.write(f"Total cost: {st.session_state.total_cost}")
     message = {"role": "assistant", "content": response}
     st.session_state.messages.append(message)
