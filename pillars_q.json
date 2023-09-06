@@ -15,7 +15,7 @@
             ]},
  "Positive Relationships":{
         "instructions":"Instructions: Relationships are fundamental to our health, well being and meaning in ife. The goal of this exercise is to evaluate the relationships in your life. Take a brief moment to think about your relationships with other people in your life, such as family, friends, significant others, colleagues at work or school. The goal of this exercise is to evaluate the relationships in your life. \n\nPlease start by rating your relationships and then address the free-response questions. Remember to write as honestly and in depth as you can manage. This ensures Atlas will have better information to base its assessments and recommendations on when helping you to positively influence your well being. For Likert Scale Response Items, please indicate your level of agreement ranging from a 1 (Strongly Disagree) to a 7 (Strongly Agree).",
-        "quesions":[
+        "questions":[
                 {"question": "I am generally satisfied with the quality of relationships in my life ", "type": "likert"},
                 {"question": "What is good about your relationships and why?", "type": "short answer"},
                 {"question": "What do you feel is missing from your relationships with other people?", "type": "short answer"},
